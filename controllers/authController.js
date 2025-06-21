@@ -23,9 +23,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-  console.log('SMTP username or password not found. Please check ');
-}
+
 
 // Multer setup
 const storage = multer.diskStorage({
@@ -94,6 +92,8 @@ export const register = async (req, res) => {
       res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
     } catch (emailErr) {
       console.error('Email sending failed:', emailErr);
+      console.log(SMTP_USER)
+      console.log(SMTP_PASS)
       res.status(201).json({ message: 'User registered, but verification email could not be sent.' });
     }
   } catch (err) {

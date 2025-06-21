@@ -1,4 +1,5 @@
-import 'dotenv/config.js';
+import dotenv from "dotenv";
+
 import express from 'express';
 import mongoose from 'mongoose';
 import path from 'path';
@@ -9,7 +10,7 @@ const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+dotenv.config();
 // Middleware
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
