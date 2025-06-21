@@ -12,14 +12,14 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false, // true for 465, false for other ports
+  // host: process.env.SMTP_HOST,
+  // port: process.env.SMTP_PORT,
+  // secure: false, // true for 465, false for other ports
+  service: "gmail", // e.g., 'gmail', 'yahoo', etc.
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: process.env.EMAIL_HOST,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -83,17 +83,18 @@ export const register = async (req, res) => {
     // Send verification email
     try {
       const verifyUrl = `${process.env.BASE_URL}/api/auth/verify-email?token=${emailToken}&email=${email}`;
-      await transporter.sendMail({
-        from: `Brain Inventory <${process.env.SENDER_EMAIL}>`,
+      transporter.sendMail({
+        from: `"Brain Inventory" <${process.env.EMAIL_HOST}>`,
         to: email,
-        subject: 'Verify your account',
+        subject: "Verify your account",
         html: `<p>Hello ${name},</p><p>Please verify your account by clicking <a href="${verifyUrl}">here</a>.</p>`
       });
       res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
     } catch (emailErr) {
       console.error('Email sending failed:', emailErr);
-      console.log(SMTP_USER)
-      console.log(SMTP_PASS)
+      console.log('SMTP_USER:', process.env.SMTP_USER);
+      console.log('SMTP_PASS:', process.env.SMTP_PASS);
+
       res.status(201).json({ message: 'User registered, but verification email could not be sent.' });
     }
   } catch (err) {
@@ -120,4 +121,4 @@ export const verifyEmail = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: 'Server error. Please try again later.' });
   }
-}; 
+};
